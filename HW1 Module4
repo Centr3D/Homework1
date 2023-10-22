@@ -1,0 +1,39 @@
+class Counter {
+    private int count; // Приватное поле для хранения счётчика
+
+    public synchronized void increment(){
+        count++; // Увеличиваем значение счётчика на 1
+    }
+
+    public int getValue() {
+        return count; // Возвращаем текущее значение счётчика
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws  InterruptedException {
+        Counter counter = new Counter(); // Создаём объект Counter
+
+        // Создаём и запускаем первый поток с использованием лямбда-выражения
+        Thread thread1 = new Thread(() -> {
+           for (int i = 0; i < 1000; i++){
+               counter.increment(); // Увеличиваем счётчик в первом потоке
+           }
+        });
+
+        // Создаём и запускаем второй поток с использованием лямбда-выражения
+        Thread thread2 = new Thread(() -> {
+            for (int i = 0; i < 1000; i++){
+                counter.increment(); // Увеличиваем счётчик во втором потоке
+            }
+        });
+
+        thread1.start(); // Запускаем первый поток
+        thread2.start(); // Запускаем второй поток
+
+        thread1.join(); // Ожидаем завершения первого потока
+        thread2.join(); // Ожидаем завершение второго потока
+
+        System.out.println("Final count value: " + counter.getValue());
+    }
+}
